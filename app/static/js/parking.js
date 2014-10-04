@@ -1,4 +1,21 @@
 $(document).ready(function() {
+    function initialize() {
+        var myLatlng = new google.maps.LatLng(37.736248,-122.448935);
+        var mapOptions = {
+            center: myLatlng,
+            zoom: 17
+        };
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
+
+        var marker = new google.maps.Marker({
+            position: myLatlng,
+            map: map
+        });
+    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
     $('#change-loc-butt').on('click', function() {
         document.location.href = '/park';
     });
@@ -25,7 +42,3 @@ $(document).ready(function() {
 
     })
 });
-
-function displayStreetCleaning() {
-    return;
-}

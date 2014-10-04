@@ -1,7 +1,8 @@
-<html>
+<!DOCTYPE html>
   <head>
     <script type='text/javascript' src='/static/js/jquery-1.11.1.min.js'></script>
     <script type='text/javascript' src='/static/js/parking.js'></script>
+    <script type='text/javascript' src='/static/js/googlemaps.js'></script>
     <link rel="stylesheet" type="text/css" href='/static/css/parking.css'></script>
   </head>
   
@@ -10,15 +11,15 @@
       <div class='title'>Your car is located at:</div>
       <div class='car-loc'>
         <div class='location-text'>{{current_location.streetNumber}} {{current_location.streetName}}</div>
-        <div class='butt' id='change-loc-butt'>
+        <div class='rect-butt' id='change-loc-butt'>
           <div class='butt-text'>Change</div>
         </div>
+        <div id="map-canvas"></div>
       </div>
       <div class='title'>Street Cleaning for this location:</div>
       {% for cleaning in cleanings %}
         <div class='cleaning-time'>{{cleaning.weekday}}: {{cleaning.fromhour}}:00 - {{cleaning.tohour}}:00</div>
       {% endfor %}
     </div>
-    <div class='map'></div>
   </body>
 </html>

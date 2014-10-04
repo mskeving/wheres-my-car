@@ -11,6 +11,13 @@
   font-size: 18px;
 }
 
+.cleaning-time {
+  height: 25px;
+}
+.car-loc {
+  height: 400px;
+}
+
 .cleaning-time, .car-loc {
   width: 75%;
   margin: auto;
@@ -22,7 +29,14 @@
   margin-right: 25px;
 }
 
-.butt {
+.rect-butt {
+  width: 80px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+
+.circle-butt {
   position: relative;
   height: 80px;
   width: 80px;
@@ -33,7 +47,7 @@
   text-align: center;
 }
 
-.butt-text {
+.circle-butt > .butt-text {
   position: absolute;
   top: 33%;
   left: 15%;
@@ -44,4 +58,10 @@
 }
 #submit-new-location {
   margin: auto;
+}
+
+#map-canvas {
+  height: 90%;
+  margin-top: 15px;
+  padding: 0px;
 }
