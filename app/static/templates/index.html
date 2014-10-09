@@ -2,8 +2,9 @@
   <head>
     <script type='text/javascript' src='/static/js/jquery-1.11.1.min.js'></script>
     <script type='text/javascript' src='/static/js/parking.js'></script>
-    <script type='text/javascript' src='/static/js/googlemaps.js'></script>
+    <script type='text/javascript' src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCaWo9mqD2bX1YkSg6-vt_3WitrxpJ-Yps'></script>
     <link rel="stylesheet" type="text/css" href='/static/css/parking.css'></script>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
   </head>
   
   <body>
@@ -14,7 +15,9 @@
         <div class='rect-butt' id='change-loc-butt'>
           <div class='butt-text'>Change</div>
         </div>
-        <div id="map-canvas"></div>
+        <div class="map-container">
+          <div id="map-canvas"></div>
+        </div>
       </div>
       <div class='title'>Street Cleaning for this location:</div>
       {% for cleaning in cleanings %}

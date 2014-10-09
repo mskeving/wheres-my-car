@@ -18,6 +18,11 @@
   height: 400px;
 }
 
+.map-container {
+  height: 100%;
+  width: 100%;
+}
+
 .cleaning-time, .car-loc {
   width: 75%;
   margin: auto;
