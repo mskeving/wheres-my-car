@@ -1,16 +1,20 @@
 <html>
   <head>
+    <script type='text/javascript' src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCaWo9mqD2bX1YkSg6-vt_3WitrxpJ-Yps'></script>
     <script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="/static/js/parking.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/parking.css"></script>
   </head>
   
   <body>
-    <div class="main-content">
-      <div class="title">Choose new location</div>
-      <div class="map"></div>
-      <div class="butt" id="submit-new-location">
+    <div class="new-location-content">
+      <div class="title">Your current location:</div>
+      <div class="sub-title location-text"></div>
+      <div class="rect-butt" id="submit-new-location">
         <div class="butt-text">Submit</div>
+      </div>
+      <div class="map-container">
+        <div id="map-canvas"></div>
       </div>
     </div>
   </body>
