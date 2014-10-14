@@ -26,10 +26,8 @@ def index():
 @app.route('/new-location', methods=['POST'])
 def submit_location():
     # remove previous location
-    # TODO: only do this if new location is inserted!
     previous_location = Location.query.filter_by(isCurrent=True).first()
     previous_location.isCurrent=False
-    db.session.commit()
 
     # submit new location
     form = request.form

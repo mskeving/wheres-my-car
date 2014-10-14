@@ -20,9 +20,13 @@
         </div>
       </div>
       <div class='title'>Street Cleaning for this location:</div>
-      {% for cleaning in cleanings %}
-        <div class='cleaning-time'>{{cleaning.weekday}}: {{cleaning.fromhour}}:00 - {{cleaning.tohour}}:00</div>
-      {% endfor %}
+      {% if cleanings.length == 0%}
+        {% for cleaning in cleanings %}
+          <div class='cleaning-time'>{{cleaning.weekday}}: {{cleaning.fromhour}}:00 - {{cleaning.tohour}}:00</div>
+        {% endfor %}
+      {% else %}
+        <div class='cleaning-time'>Nothing Found</div>
+      {% endif %}
     </div>
   </body>
 </html>
