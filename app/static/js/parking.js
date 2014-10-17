@@ -103,6 +103,12 @@ function currentLocationMap() {
                 zoom: 17
             });
 
+            marker.setOptions({
+                map: map,
+                draggable: true,
+                position: pos
+            });
+
         }, function() {
             handleNoGeolocation(true, map);
         });
