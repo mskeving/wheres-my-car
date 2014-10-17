@@ -1,12 +1,16 @@
+div {
+  font-family: 'Roboto', ariel;
+}
+
 .new-location-content, .street-cleaning-content {
   width: 100%;
-  height: 400px;
   max-width: 600px;
   margin: auto;
+  text-align: center;
 }
 .title {
   width: 75%;
-  margin: 20px auto;
+  margin: 20px auto 5px;
   text-align: center;
   font-size: 18px;
 }
@@ -25,6 +29,7 @@
 .map-container {
   height: 100%;
   width: 100%;
+  margin: 15px auto;
 }
 
 .cleaning-time, .car-loc {
@@ -33,7 +38,8 @@
   text-align: center;
 }
 
-.location-text{
+.car-loc > .location-text{
+  display: inline-block;
 }
 
 .rect-butt {
@@ -65,15 +71,26 @@
   left: 15%;
 }
 
+.butt-text > a {
+  text-decoration: none;
+  color: black;
+}
+
 #change-loc-butt {
   display: inline-block;
+  margin-left: 10px;
 }
 #submit-new-location {
-  margin: auto;
+  display: inline-block;
+}
+
+.home-butt {
+  display: inline-block;
+  text-decoration: none;
 }
 
 #map-canvas {
-  height: 90%;
-  margin-top: 15px;
+  height: 100%;
   padding: 0px;
+  border: 1px solid black;
 }

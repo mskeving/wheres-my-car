@@ -1,32 +1,23 @@
-<!DOCTYPE html>
-  <head>
-    <script type='text/javascript' src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCaWo9mqD2bX1YkSg6-vt_3WitrxpJ-Yps'></script>
-    <script type='text/javascript' src='/static/js/jquery-1.11.1.min.js'></script>
-    <script type='text/javascript' src='/static/js/parking.js'></script>
-    <link rel="stylesheet" type="text/css" href='/static/css/parking.css'></script>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-  </head>
-  
-  <body>
-    <div class='street-cleaning-content'>
-      <div class='title'>Your car is located at:</div>
-      <div class='car-loc'>
-        <div class='location-text'>{{current_location.streetNumber}} {{current_location.streetName}}</div>
-        <div class='rect-butt' id='change-loc-butt'>
-          <div class='butt-text'>Change</div>
-        </div>
-        <div class="map-container">
-          <div id="map-canvas"></div>
-        </div>
+{% extends "base.html" %}
+ 
+{% block content %}
+  <div class='street-cleaning-content'>
+    {% if cleanings.length == 0%}
+      {% for cleaning in cleanings %}
+        <div class='cleaning-time'>{{cleaning.weekday}}: {{cleaning.fromhour}}:00 - {{cleaning.tohour}}:00</div>
+      {% endfor %}
+    {% else %}
+      <div class='cleaning-time'>No street cleaning found</div>
+    {% endif %}
+    <div class='car-loc'>
+      <div class='location-text'>{{current_location.streetNumber}} {{current_location.streetName}}</div>
+      <div class='rect-butt' id='change-loc-butt'>
+        <div class='butt-text'>Change</div>
       </div>
-      <div class='title'>Street Cleaning for this location:</div>
-      {% if cleanings.length == 0%}
-        {% for cleaning in cleanings %}
-          <div class='cleaning-time'>{{cleaning.weekday}}: {{cleaning.fromhour}}:00 - {{cleaning.tohour}}:00</div>
-        {% endfor %}
-      {% else %}
-        <div class='cleaning-time'>Nothing Found</div>
-      {% endif %}
+      <div class="map-container">
+        <div id="map-canvas"></div>
+      </div>
     </div>
-  </body>
-</html>
+  </div>
+{% endblock %}
+mioasdf
