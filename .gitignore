@@ -1,8 +1,4 @@
 env/
-alembic/
-alembic.ini
 
 outline
-sfsweeproutes.csv
-import.py
 *.pyc
