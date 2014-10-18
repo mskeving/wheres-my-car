@@ -40,7 +40,7 @@ div {
 }
 
 .car-loc > .location-text{
-  display: inline-block;
+  margin-top: 5px;
 }
 
 .rect-butt {
