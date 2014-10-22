@@ -3,11 +3,11 @@ import sqlalchemy
 from sqlalchemy import create_engine
 from app import db, app
 
-from app.model import StreetCleaning
+from app.models import StreetCleaning
 
-def main():
+def add_street_cleaning_data():
 
-    with open('sfsweeproutes.csv', 'rU') as csvfile:
+    with open('app/data/sfsweeproutes.csv', 'rU') as csvfile:
         street_cleanings = csv.reader(csvfile, delimiter=',')
         street_cleanings.next()
         for street_cleaning in street_cleanings:
@@ -44,4 +44,4 @@ def main():
     db.session.commit()
 
 if __name__ == '__main__':
-    main()
+    add_street_cleaning_data()

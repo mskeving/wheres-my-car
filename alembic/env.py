@@ -5,11 +5,13 @@ from logging.config import fileConfig
 import os, sys
 sys.path.append(os.getcwd())
 
-from app import db, app
+from app import db, create_app
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+app = create_app(os.envinron['CONFIG_ENV')
 
 config.set_main_option('sqlalchemy.url', app.config['SQLALCHEMY_DATABASE_URI'])
 

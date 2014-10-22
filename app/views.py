@@ -1,8 +1,9 @@
 import re
 
 from flask import render_template, request
+from datetime import datetime
 from app import app, db
-from model import StreetCleaning, Location
+from models import StreetCleaning, Location
 
 @app.route('/')
 def index():
@@ -61,6 +62,7 @@ def submit_location():
     street_num = form.get('streetNum')
     street_name = form.get('streetName')
     new_location = Location(isCurrent=True, streetNumber=street_num, streetName=street_name)
+    new_location.time = datetime.utcnow()
     db.session.add(new_location)
     db.session.commit()
 
