@@ -17,11 +17,6 @@ $(document).ready(function() {
         var streetNum = address.substr(0, address.indexOf(' '));
             streetName =  address.substr(address.indexOf(' ')+1);
 
-        if (!Number(streetNum.substr(-1))){
-            // if last character isn't a number, get rid of it
-            streetNum = streetNum.slice(0, -1);
-        }
-
         $.ajax({
             type: "Post",
             url: '/new-location',
