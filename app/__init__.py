@@ -22,7 +22,7 @@ def create_db(app):
     location = Location(isCurrent=True, streetNumber=531, streetName='Fillmore St')
     location.time = datetime.utcnow()
     db.session.add(location)
-    
+
     # add street cleaning data
     from app.data import populate
     populate.add_street_cleaning_data()

@@ -30,8 +30,7 @@ $(document).ready(function() {
                 streetName: streetName
             },
             success: function() {
-                //document.location.href = '/';
-                console.log('success');
+                document.location.href = '/';
             },
             error: function() {
                 alert('error submitting address');
