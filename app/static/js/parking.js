@@ -45,6 +45,7 @@ function carLocationMap() {
     geocoder.geocode({'address': address}, function (results, status) {
         var pos = new google.maps.LatLng(results[0]['geometry'].location.lat(),
                                         results[0]['geometry'].location.lng());
+
         marker.setOptions({
             map: map,
             position: pos
@@ -59,60 +60,78 @@ function carLocationMap() {
 function currentLocationMap() {
     var map = new google.maps.Map(document.getElementById('map-canvas'));
     var marker = new google.maps.Marker();
+    var markersArray = [];
     var geocoder = new google.maps.Geocoder();
 
-    function displayAddress(address) {
-        var streetAddress = address.split(',')[0];
-        $('.location-text').text(streetAddress);
-    }
 
     //HTML geolocation
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             var pos = new google.maps.LatLng(position.coords.latitude,
-                                            position.coords.longitude);
+                position.coords.longitude);
 
-            marker.setOptions({
-                map: map, 
-                draggable: true,
-                position: pos
-            });
-
-            geocoder.geocode({'latLng': pos}, function (results, status) {
-                if (status === google.maps.GeocoderStatus.OK) {
-                    if (results[0]) {
-                        // results is an array. 0 being most specific postal 
-                        // address to 6 referring to United States
-                        displayAddress(results[0]['formatted_address']);
-                    } else {
-                        console.log('no results found');
-                    }
-                } else {
-                    console.log('Geocoder failed due to: ' + status);
-                }
-            });
+            updateAddress(pos.lat(), pos.lng());
 
             map.setOptions({
                 center: pos,
                 zoom: 17
             });
 
-            marker.setOptions({
-                map: map,
-                draggable: true,
-                position: pos
+            addMarker(pos);
+
+            google.maps.event.addListener(map, 'click', function(event) {
+                removeMarkers();
+                addMarker(event.latLng);
+                updateAddress(event.latLng.lat(), event.latLng.lng());
             });
 
         }, function() {
             handleNoGeolocation(true, map);
         });
 
-
     } else {
         // browser doesn't support geolocation
         handleNoGeolocation(false, map);
     }
 
+    function updateAddress(lat, lng) {
+        var streetAddress;
+        var pos = new google.maps.LatLng(lat, lng);
+
+        geocoder.geocode({'latLng': pos}, function (results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    // results is array, 0 idx being most specific postal address
+                    streetAddress = results[0]['formatted_address'];
+                    $('.location-text').text(streetAddress.split(',')[0]);
+                } else {
+                    $('.location-text').text('No Location Found');
+                }
+            } else {
+                $('.location-text').text('Geocoder failed: ', status);
+            }
+        });
+    }
+
+    function addMarker(latlng) {
+        var marker = new google.maps.Marker({
+            position: latlng,
+            map: map,
+            draggable:true
+        });
+
+        google.maps.event.addListener(marker,'dragend',function(event) {
+            updateAddress(event.latLng.lat(), event.latLng.lng());
+        });
+
+        markersArray.push(marker);
+    }
+
+    function removeMarkers() {
+        for (var i=0; i<markersArray.length; i++) {
+            markersArray[i].setMap(null);
+        }
+    }
 }
 
 function handleNoGeolocation(errorFlag, map) {
