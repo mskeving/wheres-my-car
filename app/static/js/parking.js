@@ -42,7 +42,13 @@ function carLocationMap() {
     var geocoder = new google.maps.Geocoder();
     var address = $('.location-text').text();
 
-    geocoder.geocode({'address': address}, function (results, status) {
+    // bounds for San Francisco, bias results to be in SF
+    var sw = new google.maps.LatLng(37.701228, -122.508325);
+    var ne = new google.maps.LatLng(37.815500, -122.377691);
+    var bounds = new google.maps.LatLngBounds(sw, ne);
+
+    geocoder.geocode({ 'address': address,
+            'bounds': bounds}, function (results, status) {
         var pos = new google.maps.LatLng(results[0]['geometry'].location.lat(),
                                         results[0]['geometry'].location.lng());
 
@@ -50,9 +56,10 @@ function carLocationMap() {
             map: map,
             position: pos
         });
+
         map.setOptions({
             center: pos,
-            zoom: 17
+            zoom: 17,
         });
     });
 }
