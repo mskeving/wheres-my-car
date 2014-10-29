@@ -16,14 +16,14 @@ def index():
     relevant_cleanings = []
     for street_cleaning in street_cleanings:
         # if street_num odd -> left side of street, even -> right
-        # left and right cleanings denoted in cnnrightle column
+        # even numbered addresses on 0 side, odd addresses on 1
         if street_num % 2 == 0:
-            if (street_num >= int(street_cleaning.rt_fadd) and street_num <= int(street_cleaning.rt_toadd)
-                and street_cleaning.cnnrightle == 'R'):
+            if (street_num >= street_cleaning.street_min and street_num <= street_cleaning.street_max
+                and street_cleaning.side == 0):
                 relevant_cleanings.append(street_cleaning)
         else:
-            if (street_num >= int(street_cleaning.lf_fadd) and street_num <= int(street_cleaning.lf_toadd)
-                and street_cleaning.cnnrightle == 'L'):
+            if (street_num >= street_cleaning.street_min and street_num <= street_cleaning.street_max
+                and street_cleaning.side == 1):
                 relevant_cleanings.append(street_cleaning)
 
     return render_template('index.html',
