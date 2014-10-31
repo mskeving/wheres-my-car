@@ -33,6 +33,10 @@ div {
   margin: 15px auto;
 }
 
+#content {
+  width: 150px;
+}
+
 .cleaning-time, .car-loc {
   width: 75%;
   margin: auto;

@@ -1,5 +1,6 @@
-import re
+import re, json
 
+from sqlalchemy import and_
 from flask import render_template, request
 from datetime import datetime
 from app import app, db
@@ -34,6 +35,36 @@ def index():
 @app.route('/park')
 def park():
     return render_template('new_location.html')
+
+@app.route('/lookup', methods=['POST'])
+def lookup():
+    street_num, street_name = format_address(request.form.get('streetNum'),
+        request.form.get('streetName'))
+
+    side = 0 if street_num%2 == 0 else 1
+
+    print street_num
+    print street_name
+    street_cleanings = StreetCleaning.query.filter(
+        and_(StreetCleaning.streetname==street_name,
+        StreetCleaning.street_min<=street_num,
+        StreetCleaning.street_max>=street_num,
+        StreetCleaning.side==side)
+    ).all()
+
+    content = "<div class='cleaning-content'>"
+    if len(street_cleanings) == 0:
+        content += "<div class='cleaning'>No Cleaning Found</div>"
+    else:
+        for c in street_cleanings:
+            content += "<div class='cleaning'>" \
+                + c.weekday + ' ' + str(c.fromhour) + ' - ' + str(c.tohour) \
+                + "</div>"
+    content += "</div>"
+
+    print content
+
+    return json.dumps(content)
 
 @app.route('/new-location', methods=['POST'])
 def submit_location():
@@ -76,6 +107,6 @@ def format_address(street_num, street_name):
     street_name = pattern.sub(lambda x: street_abbr_dict[x.group()], street_name.lower()).upper()
 
     # http://stackoverflow.com/questions/13518874/python-regex-get-end-digits-from-a-string
-    street_num = re.match('.*?([0-9]+)', street_num).group(0)
+    street_num = int(re.match('.*?([0-9]+)', street_num).group(0))
 
     return street_num, street_name

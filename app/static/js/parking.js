@@ -37,31 +37,91 @@ $(document).ready(function() {
 
 
 function carLocationMap() {
-    var map = new google.maps.Map(document.getElementById('map-canvas'));
-    var marker = new google.maps.Marker();
-    var geocoder = new google.maps.Geocoder();
-    var address = $('.location-text').text();
+    var address = $('.location-text').text(),
+        carMarker = new google.maps.Marker(),
+        geocoder = new google.maps.Geocoder();
+        infowindow = new google.maps.InfoWindow(),
+        map = new google.maps.Map(document.getElementById('map-canvas')),
+        newMarker = new google.maps.Marker();
 
     // bounds for San Francisco, bias results to be in SF
-    var sw = new google.maps.LatLng(37.701228, -122.508325);
-    var ne = new google.maps.LatLng(37.815500, -122.377691);
-    var bounds = new google.maps.LatLngBounds(sw, ne);
+    var sw = new google.maps.LatLng(37.701228, -122.508325),
+        ne = new google.maps.LatLng(37.815500, -122.377691),
+        bounds = new google.maps.LatLngBounds(sw, ne);
 
-    geocoder.geocode({ 'address': address,
-            'bounds': bounds}, function (results, status) {
+    geocoder.geocode({ 'address': address, 'bounds': bounds}, function (results, status) {
         var pos = new google.maps.LatLng(results[0]['geometry'].location.lat(),
-                                        results[0]['geometry'].location.lng());
+            results[0]['geometry'].location.lng());
 
-        marker.setOptions({
+        carMarker.setOptions({
+            position: pos,
             map: map,
-            position: pos
         });
 
         map.setOptions({
             center: pos,
             zoom: 17,
-        });
+        })
     });
+
+    var lookupCleanings = function(pos) {
+        geocoder.geocode({'latLng': pos}, function (results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    // results is array, 0 idx being most specific postal address
+                    displayCleanings(results[0]['formatted_address'].split(',')[0]);
+                }
+            } else {
+                alert('problem with geocoding: ', status);
+            }
+        });
+    }
+
+    google.maps.event.addListener(map, 'click', function(event) {
+        infowindow.close();
+        moveMarker(event.latLng);
+        lookupCleanings(event.latLng);
+    });
+
+    var displayCleanings = function(address) {
+        var streetNum = address.substr(0, address.indexOf(' '));
+        var streetName = address.substr(address.indexOf(' ')+1);
+
+        $.ajax({
+            type: "Post",
+            url: '/lookup',
+            dataType: 'json',
+            data: {
+                streetNum: streetNum,
+                streetName: streetName
+            },
+            success: function(data) {
+                infowindow.setContent('<div id="content">' +
+                    '<div id="street-address">' + address + '</div>' +
+                    data + '</div>'
+                );
+                infowindow.open(map, newMarker);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                infowindow.setContent('<div id="content">' +
+                    '<div id="street-address">Error Accessing Server:' +
+                    errorThrown + '</div>' + '</div>'
+                );
+            }
+        })
+    }
+
+    function moveMarker(latlng) {
+        newMarker.setOptions({
+            position: latlng,
+            map: map,
+            draggable:true
+        });
+
+        google.maps.event.addListener(newMarker, 'dragend', function(event) {
+            lookupCleanings(event.latLng);
+        });
+    }
 }
 
 function currentLocationMap() {
@@ -127,7 +187,7 @@ function currentLocationMap() {
             draggable:true
         });
 
-        google.maps.event.addListener(marker,'dragend',function(event) {
+        google.maps.event.addListener(marker, 'dragend', function(event) {
             updateAddress(event.latLng.lat(), event.latLng.lng());
         });
 
@@ -140,6 +200,7 @@ function currentLocationMap() {
         }
     }
 }
+
 
 function handleNoGeolocation(errorFlag, map) {
     if (errorFlag) {
