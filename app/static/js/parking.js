@@ -64,29 +64,27 @@ function carLocationMap() {
         })
     });
 
-    var lookupCleanings = function(pos) {
-        geocoder.geocode({'latLng': pos}, function (results, status) {
-            if (status === google.maps.GeocoderStatus.OK) {
-                if (results[0]) {
-                    // results is array, 0 idx being most specific postal address
-                    displayCleanings(results[0]['formatted_address'].split(',')[0]);
-                }
-            } else {
-                alert('problem with geocoding: ', status);
-            }
-        });
-    }
-
     google.maps.event.addListener(map, 'click', function(event) {
         infowindow.close();
         moveMarker(event.latLng);
         lookupCleanings(event.latLng);
     });
 
-    var displayCleanings = function(address) {
-        var streetNum = address.substr(0, address.indexOf(' '));
-        var streetName = address.substr(address.indexOf(' ')+1);
+    function lookupCleanings(pos) {
+        geocoder.geocode({'latLng': pos}, function (results, status) {
+            if (status != google.maps.GeocoderStatus.OK || !results[0]) {
+                alert('problem with geocoding: ', status);
+                return;
+            }
+            address = results[0]['formatted_address'].split(',')[0];
+            fetchCleaningData(address, displayCleaningInfo.bind(this, address));
+        });
+    }
 
+    function fetchCleaningData(address, callback) {
+        var parts = address.split(' ');
+        var streetNum = parts.shift();
+        var streetName = parts.join(' ');
         $.ajax({
             type: "Post",
             url: '/lookup',
@@ -95,20 +93,22 @@ function carLocationMap() {
                 streetNum: streetNum,
                 streetName: streetName
             },
-            success: function(data) {
-                infowindow.setContent('<div id="content">' +
-                    '<div id="street-address">' + address + '</div>' +
-                    data + '</div>'
-                );
-                infowindow.open(map, newMarker);
-            },
+            success: callback,
             error: function(jqXHR, textStatus, errorThrown) {
                 infowindow.setContent('<div id="content">' +
                     '<div id="street-address">Error Accessing Server:' +
                     errorThrown + '</div>' + '</div>'
                 );
             }
-        })
+        });
+    }
+
+    function displayCleaningInfo(address, cleaningInfo) {
+        infowindow.setContent('<div id="content">' +
+            '<div id="street-address">' + address + '</div>' +
+            cleaningInfo + '</div>'
+        );
+        infowindow.open(map, newMarker);
     }
 
     function moveMarker(latlng) {
