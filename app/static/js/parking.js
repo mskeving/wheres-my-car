@@ -1,23 +1,44 @@
 $(document).ready(function() {
-    if ($('.new-location-content').length > 0) {
-        currentLocationMap();
-    } else if ($('.street-cleaning-content').length > 0) {
-        carLocationMap();
-    }
-
-    $('#change-loc-butt').on('click', function() {
-        document.location.href = '/park';
-    });
-
+    setupMap();
 });
 
-function carLocationMap() {
+function setupMap() {
     var address = $('.location-text').text(),
         carMarker = new google.maps.Marker(),
-        geocoder = new google.maps.Geocoder();
+        geocoder = new google.maps.Geocoder(),
         infowindow = new google.maps.InfoWindow(),
         map = new google.maps.Map(document.getElementById('map-canvas')),
         newMarker = new google.maps.Marker();
+
+    // move newMarker to current location - HTML geolocation
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = new google.maps.LatLng(position.coords.latitude,
+                position.coords.longitude);
+            geocoder.geocode({'latLng': pos}, function (results, status) {
+                if (status != google.maps.GeocoderStatus.OK || !results[0]) {
+                    alert('problem with geocoding: ', status);
+                    return;
+                }
+                var address = results[0]['formatted_address'].split(',')[0];
+                infowindow.setContent('<div id="content">' +
+                    'Your current location:' +
+                    '<div id="street-address">' + address + '</div>' +
+                    '<div id="new-location">park here</div></div>'
+                );
+            });
+
+            moveMarker(pos);
+            infowindow.open(map, newMarker);
+
+        }, function() {
+            handleNoGeolocation(true, map);
+        });
+
+    } else {
+        // browser doesn't support geolocation
+        handleNoGeolocation(false, map);
+    }
 
     // bounds for San Francisco, bias results to be in SF
     var sw = new google.maps.LatLng(37.701228, -122.508325),
@@ -38,12 +59,6 @@ function carLocationMap() {
             center: pos,
             zoom: 17,
         })
-    });
-
-    google.maps.event.addListener(map, 'click', function(event) {
-        infowindow.close();
-        moveMarker(event.latLng);
-        lookupCleanings(event.latLng);
     });
 
     function lookupCleanings(pos) {
@@ -93,11 +108,16 @@ function carLocationMap() {
             map: map,
             draggable:true
         });
-
-        google.maps.event.addListener(newMarker, 'dragend', function(event) {
-            lookupCleanings(event.latLng);
-        });
     }
+
+    google.maps.event.addListener(map, 'click', function(event) {
+        moveMarker(event.latLng);
+        lookupCleanings(event.latLng);
+    });
+
+    google.maps.event.addListener(newMarker, 'dragend', function(event) {
+        lookupCleanings(event.latLng);
+    });
 
     google.maps.event.addListener(infowindow, 'domready', function() {
         $('#new-location').on('click', function(){
@@ -125,85 +145,8 @@ function carLocationMap() {
 
         })
     });
+
 }
-
-function currentLocationMap() {
-    var map = new google.maps.Map(document.getElementById('map-canvas'));
-    var marker = new google.maps.Marker();
-    var markersArray = [];
-    var geocoder = new google.maps.Geocoder();
-
-
-    //HTML geolocation
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var pos = new google.maps.LatLng(position.coords.latitude,
-                position.coords.longitude);
-
-            updateAddress(pos.lat(), pos.lng());
-
-            map.setOptions({
-                center: pos,
-                zoom: 17
-            });
-
-            addMarker(pos);
-
-            google.maps.event.addListener(map, 'click', function(event) {
-                removeMarkers();
-                addMarker(event.latLng);
-                updateAddress(event.latLng.lat(), event.latLng.lng());
-            });
-
-        }, function() {
-            handleNoGeolocation(true, map);
-        });
-
-    } else {
-        // browser doesn't support geolocation
-        handleNoGeolocation(false, map);
-    }
-
-    function updateAddress(lat, lng) {
-        var streetAddress;
-        var pos = new google.maps.LatLng(lat, lng);
-
-        geocoder.geocode({'latLng': pos}, function (results, status) {
-            if (status === google.maps.GeocoderStatus.OK) {
-                if (results[0]) {
-                    // results is array, 0 idx being most specific postal address
-                    streetAddress = results[0]['formatted_address'];
-                    $('.location-text').text(streetAddress.split(',')[0]);
-                } else {
-                    $('.location-text').text('No Location Found');
-                }
-            } else {
-                $('.location-text').text('Geocoder failed: ', status);
-            }
-        });
-    }
-
-    function addMarker(latlng) {
-        var marker = new google.maps.Marker({
-            position: latlng,
-            map: map,
-            draggable:true
-        });
-
-        google.maps.event.addListener(marker, 'dragend', function(event) {
-            updateAddress(event.latLng.lat(), event.latLng.lng());
-        });
-
-        markersArray.push(marker);
-    }
-
-    function removeMarkers() {
-        for (var i=0; i<markersArray.length; i++) {
-            markersArray[i].setMap(null);
-        }
-    }
-}
-
 
 function handleNoGeolocation(errorFlag, map) {
     if (errorFlag) {

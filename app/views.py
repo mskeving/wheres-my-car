@@ -32,10 +32,6 @@ def index():
                             cleanings=relevant_cleanings,
                             )
 
-@app.route('/park')
-def park():
-    return render_template('new_location.html')
-
 @app.route('/lookup', methods=['POST'])
 def lookup():
     street_num, street_name = format_address(request.form.get('streetNum'),
