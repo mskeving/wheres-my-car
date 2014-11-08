@@ -12,24 +12,16 @@ def index():
     street_num = int(current_location.streetNumber)
     street_name = current_location.streetName
 
-    street_cleanings = StreetCleaning.query.filter_by(streetname=street_name).all()
-
-    relevant_cleanings = []
-    for street_cleaning in street_cleanings:
-        # if street_num odd -> left side of street, even -> right
-        # even numbered addresses on 0 side, odd addresses on 1
-        if street_num % 2 == 0:
-            if (street_num >= street_cleaning.street_min and street_num <= street_cleaning.street_max
-                and street_cleaning.side == 0):
-                relevant_cleanings.append(street_cleaning)
-        else:
-            if (street_num >= street_cleaning.street_min and street_num <= street_cleaning.street_max
-                and street_cleaning.side == 1):
-                relevant_cleanings.append(street_cleaning)
+    cleanings = StreetCleaning.query.filter(
+        and_(StreetCleaning.streetname==street_name,
+        StreetCleaning.street_min<=street_num,
+        StreetCleaning.street_max>=street_num,
+        StreetCleaning.side==street_num%2)
+    ).all()
 
     return render_template('index.html',
                             current_location=current_location,
-                            cleanings=relevant_cleanings,
+                            cleanings=cleanings,
                             )
 
 @app.route('/lookup', methods=['POST'])
@@ -37,28 +29,22 @@ def lookup():
     street_num, street_name = format_address(request.form.get('streetNum'),
         request.form.get('streetName'))
 
-    side = 0 if street_num%2 == 0 else 1
-
-    print street_num
-    print street_name
-    street_cleanings = StreetCleaning.query.filter(
+    cleanings = StreetCleaning.query.filter(
         and_(StreetCleaning.streetname==street_name,
         StreetCleaning.street_min<=street_num,
         StreetCleaning.street_max>=street_num,
-        StreetCleaning.side==side)
+        StreetCleaning.side==street_num%2)
     ).all()
 
     content = "<div class='cleaning-content'>"
-    if len(street_cleanings) == 0:
-        content += "<div class='cleaning'>No Cleaning Found</div>"
-    else:
-        for c in street_cleanings:
+    if len(cleanings) > 0:
+        for c in cleanings:
             content += "<div class='cleaning'>" \
                 + c.weekday + ' ' + str(c.fromhour) + ' - ' + str(c.tohour) \
                 + "</div>"
+    else:
+        content += "<div class='cleaning'>No Cleaning Found</div>"
     content += "</div>"
-
-    print content
 
     return json.dumps(content)
 
