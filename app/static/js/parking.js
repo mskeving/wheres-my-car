@@ -9,32 +9,7 @@ $(document).ready(function() {
         document.location.href = '/park';
     });
 
-    $('#submit-new-location').on('click', function() {
-        // assuming address coming in as NUMBER STREETNAME
-        // as in.. before first space is the number and everything after
-        // the first space will be the street information
-        var address = $('.location-text').text();
-        var streetNum = address.substr(0, address.indexOf(' '));
-            streetName =  address.substr(address.indexOf(' ')+1);
-
-        $.ajax({
-            type: "Post",
-            url: '/new-location',
-            data: {
-                streetNum: streetNum,
-                streetName: streetName
-            },
-            success: function() {
-                document.location.href = '/';
-            },
-            error: function() {
-                alert('error submitting address');
-            }
-        })
-
-    })
 });
-
 
 function carLocationMap() {
     var address = $('.location-text').text(),
@@ -56,6 +31,7 @@ function carLocationMap() {
         carMarker.setOptions({
             position: pos,
             map: map,
+            icon: '/static/images/suzuki.jpg'
         });
 
         map.setOptions({
@@ -106,7 +82,7 @@ function carLocationMap() {
     function displayCleaningInfo(address, cleaningInfo) {
         infowindow.setContent('<div id="content">' +
             '<div id="street-address">' + address + '</div>' +
-            cleaningInfo + '</div>'
+            cleaningInfo + '<div id="new-location">park here</div></div>'
         );
         infowindow.open(map, newMarker);
     }
@@ -122,6 +98,33 @@ function carLocationMap() {
             lookupCleanings(event.latLng);
         });
     }
+
+    google.maps.event.addListener(infowindow, 'domready', function() {
+        $('#new-location').on('click', function(){
+            var address = $('#street-address').text(),
+                streetNum = address.substr(0, address.indexOf(' ')),
+                streetName =  address.substr(address.indexOf(' ')+1);
+
+            $.ajax({
+                type: "Post",
+                url: '/new-location',
+                data: {
+                    streetNum: streetNum,
+                    streetName: streetName
+                },
+                success: function() {
+                    $('.location-text').text(address);
+                    infowindow.close();
+                    newMarker.setMap(null);
+                    carMarker.setOptions({position: newMarker.position});
+                },
+                error: function() {
+                    alert('error submitting address');
+                }
+            })
+
+        })
+    });
 }
 
 function currentLocationMap() {

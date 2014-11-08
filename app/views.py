@@ -87,7 +87,7 @@ def submit_location():
     return 'success'
 
 def format_address(street_num, street_name):
-    # change street > st etc. potential problem strees: mission bay blvd nor/sou, the embarcadero
+    # change street > st etc. potential problem streets: mission bay blvd nor/sou, the embarcadero
     # street_num to numeric. Not 901-933 or 531A
 
     street_abbr_dict = {
@@ -97,7 +97,7 @@ def format_address(street_num, street_name):
         'lane': 'ln',
         'court': 'ct',
         'drive': 'dr',
-        'terrave': 'ter',
+        'terrace': 'ter',
         'tunnel': 'tunl'
     }
 

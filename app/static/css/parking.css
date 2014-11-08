@@ -37,6 +37,10 @@ div {
   width: 150px;
 }
 
+#new-location {
+  color: blue;
+}
+
 .cleaning-time, .car-loc {
   width: 75%;
   margin: auto;
