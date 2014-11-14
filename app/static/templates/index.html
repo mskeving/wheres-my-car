@@ -2,6 +2,8 @@
  
 {% block content %}
   <div class='street-cleaning-content'>
+    <div class='title'>Lola's location &amp; cleaning schedule:</div>
+    <div class='location-text'>{{current_location.streetNumber}} {{current_location.streetName}}</div>
     {% if cleanings.length != 0%}
       {% for cleaning in cleanings %}
         <div class='cleaning-time'>{{cleaning.weekday}}: {{cleaning.fromhour}}:00 - {{cleaning.tohour}}:00</div>
@@ -9,11 +11,8 @@
     {% else %}
       <div class='cleaning-time'>No street cleaning found</div>
     {% endif %}
-    <div class='car-loc'>
-      <div class='location-text'>{{current_location.streetNumber}} {{current_location.streetName}}</div>
-      <div class="map-container">
-        <div id="map-canvas"></div>
-      </div>
-    </div>
+  </div>
+  <div class="map-container">
+    <div id="map-canvas"></div>
   </div>
 {% endblock %}

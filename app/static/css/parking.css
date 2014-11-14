@@ -1,14 +1,28 @@
+/* http://paletton.com/#uid=13S0u0klllldVN5gRvUpPaMtG4E */
 div {
   font-family: 'Roboto', ariel;
 }
 
-.street-cleaning-content {
-  width: 100%;
-  max-width: 600px;
-  margin: auto;
-  text-align: center;
+body {
+  background-color: #5D6CAD;
 }
 
+.title {
+  font-size: 19px;
+  margin-bottom: 5px;
+}
+
+.street-cleaning-content {
+  max-width: 415px;
+  margin: auto;
+  text-align: center;
+  background-color: #8897D6;
+  border-radius: 5px;
+}
+
+.location-text{
+  margin-bottom: 5px;
+}
 .cleaning-time {
   height: 25px;
 }
@@ -18,13 +32,14 @@ div {
 }
 
 .map-container {
-  height: 100%;
-  width: 100%;
+  height: 500px;
+  width: 450px;
   margin: 15px auto;
 }
 
 #content {
   width: 150px;
+  text-align: center;
 }
 
 #new-location {
@@ -37,9 +52,6 @@ div {
   text-align: center;
 }
 
-.car-loc > .location-text{
-  margin-top: 5px;
-}
 
 #map-canvas {
   height: 100%;
