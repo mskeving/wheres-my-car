@@ -132,8 +132,19 @@ function setupMap() {
                     streetNum: streetNum,
                     streetName: streetName
                 },
-                success: function() {
+                success: function(cleanings) {
+                    var cleaningsArray = $.parseJSON(cleanings);
+                    $('.cleaning-time').remove();
                     $('.location-text').text(address);
+                    for (var i = 0; i < cleaningsArray.length; i++) {
+                        $('.street-cleaning-content').append(
+                            "<div class='cleaning-time'>" +
+                            cleaningsArray[i].weekday + ' ' +
+                            cleaningsArray[i].fromhour + ' - ' +
+                            cleaningsArray[i].tohour +
+                            "</div>"
+                        );
+                    }
                     infowindow.close();
                     newMarker.setMap(null);
                     carMarker.setOptions({position: newMarker.position});

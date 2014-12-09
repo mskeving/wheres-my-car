@@ -6,7 +6,7 @@
     <div class='location-text'>{{current_location.streetNumber}} {{current_location.streetName}}</div>
     {% if cleanings.length != 0%}
       {% for cleaning in cleanings %}
-        <div class='cleaning-time'>{{cleaning.weekday}}: {{cleaning.fromhour}}:00 - {{cleaning.tohour}}:00</div>
+        <div class='cleaning-time'>{{cleaning.weekday}} {{cleaning.fromhour}}:00 - {{cleaning.tohour}}:00</div>
       {% endfor %}
     {% else %}
       <div class='cleaning-time'>No street cleaning found</div>

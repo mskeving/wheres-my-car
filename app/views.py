@@ -54,7 +54,14 @@ def submit_location():
     db.session.add(new_location)
     db.session.commit()
 
-    return 'success'
+    cleaning_list = []
+    for cleaning in get_cleanings(street_num, street_name):
+        cleaning_list.append({
+            'weekday': cleaning.weekday,
+            'fromhour': cleaning.fromhour,
+            'tohour': cleaning.tohour
+        })
+    return json.dumps(cleaning_list)
 
 def get_cleanings(street_num, street_name):
     return StreetCleaning.query.filter(
