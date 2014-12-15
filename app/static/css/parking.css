@@ -13,6 +13,7 @@ body {
 }
 
 .street-cleaning-content {
+  position: relative;
   max-width: 415px;
   margin: auto;
   text-align: center;
@@ -22,6 +23,7 @@ body {
 
 .location-text{
   margin-bottom: 5px;
+  cursor: pointer;
 }
 .cleaning-time {
   height: 25px;
@@ -29,6 +31,17 @@ body {
 
 .car-loc {
   height: 400px;
+}
+
+.go-to-current-location {
+  position: absolute;
+  height: 40px;
+  width: 40px;
+  right: 5px;
+  bottom: 5px;
+  padding: 4px;
+  background-color: #5D6CAD;
+  cursor: pointer;
 }
 
 .map-container {

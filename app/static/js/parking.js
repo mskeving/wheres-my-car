@@ -10,56 +10,78 @@ function setupMap() {
         map = new google.maps.Map(document.getElementById('map-canvas')),
         newMarker = new google.maps.Marker();
 
-    // move newMarker to current location - HTML geolocation
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var pos = new google.maps.LatLng(position.coords.latitude,
-                position.coords.longitude);
-            geocoder.geocode({'latLng': pos}, function (results, status) {
-                if (status != google.maps.GeocoderStatus.OK || !results[0]) {
-                    alert('problem with geocoding: ', status);
-                    return;
-                }
-                var address = results[0]['formatted_address'].split(',')[0];
-                infowindow.setContent('<div id="content">' +
-                    'Your current location:' +
-                    '<div id="street-address">' + address + '</div>' +
-                    '<div id="new-location">park here</div></div>'
-                );
-            });
-
-            moveMarker(pos);
-            infowindow.open(map, newMarker);
-
-        }, function() {
-            handleNoGeolocation(true, map);
-        });
-
-    } else {
-        // browser doesn't support geolocation
-        handleNoGeolocation(false, map);
-    }
-
     // bounds for San Francisco, bias results to be in SF
     var sw = new google.maps.LatLng(37.701228, -122.508325),
         ne = new google.maps.LatLng(37.815500, -122.377691),
         bounds = new google.maps.LatLngBounds(sw, ne);
 
-    geocoder.geocode({ 'address': address, 'bounds': bounds}, function (results, status) {
-        var pos = new google.maps.LatLng(results[0]['geometry'].location.lat(),
-            results[0]['geometry'].location.lng());
+    // Show current location - default behavior
+    goToCarLocation();
 
-        carMarker.setOptions({
-            position: pos,
-            map: map,
-            icon: '/static/images/suzuki.jpg'
+    $('.go-to-current-location').on('click', function() {
+        getCurrentLocation(addMarker);
+    });
+    $('.location-text').on('click', function() {
+        goToCarLocation();
+    });
+
+    // HTML geolocation
+    function getCurrentLocation(callback) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var pos = new google.maps.LatLng(position.coords.latitude,
+                    position.coords.longitude);
+                callback(pos);
+            }, function() {
+                handleNoGeolocation(true, map);
+            });
+
+        } else {
+            // browser doesn't support geolocation
+            handleNoGeolocation(false, map);
+        }
+    }
+
+    // Add marker for current location
+    function addMarker(pos) {
+        geocoder.geocode({'latLng': pos}, function (results, status) {
+            if (status != google.maps.GeocoderStatus.OK || !results[0]) {
+                alert('problem with geocoding: ', status);
+                return;
+            }
+            var currentAddress = results[0]['formatted_address'].split(',')[0];
+            infowindow.setContent('<div id="content">' +
+                'Your current location:' +
+                '<div id="street-address">' + currentAddress + '</div>' +
+                '<div id="new-location">park here</div></div>'
+            );
         });
-
         map.setOptions({
             center: pos,
-            zoom: 17,
+            zoom: 17
         })
-    });
+        moveMarker(pos);
+        infowindow.open(map, newMarker);
+    }
+
+    // set car's location
+    function  goToCarLocation() {
+        geocoder.geocode({ 'address': address, 'bounds': bounds}, function (results, status) {
+            var pos = new google.maps.LatLng(results[0]['geometry'].location.lat(),
+                results[0]['geometry'].location.lng());
+
+            carMarker.setOptions({
+                position: pos,
+                map: map,
+                icon: '/static/images/suzuki.jpg'
+            });
+
+            map.setOptions({
+                center: pos,
+                zoom: 17
+            })
+        });
+    }
 
     function lookupCleanings(pos) {
         geocoder.geocode({'latLng': pos}, function (results, status) {
