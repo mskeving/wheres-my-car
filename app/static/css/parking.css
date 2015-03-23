@@ -1,4 +1,13 @@
 /* http://paletton.com/#uid=13S0u0klllldVN5gRvUpPaMtG4E */
+
+@media only screen and (max-device-width: 480px) {
+    .map-container {
+      height: 460px !important;
+      width: 330px !important;
+      margin: 15px auto !important;
+    }
+}
+
 div {
   font-family: 'Roboto', ariel;
 }
