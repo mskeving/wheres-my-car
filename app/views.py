@@ -38,22 +38,29 @@ def lookup():
 
 @app.route('/new-location', methods=['POST'])
 def submit_location():
-    # Get address
+    """
+    Endpoint to update current location of car. Once
+    location is updated, returns list of street cleanings
+    for that location.
+    """
     street_num = request.form.get('streetNum')
     street_name = request.form.get('streetName')
 
-    # Format Address
+    # Add new current location
     street_num, street_name = format_address(street_num, street_name)
+    db.session.add(Location(isCurrent=True,
+                            streetNumber=street_num,
+                            streetName=street_name,
+                            time=datetime.utcnow()))
 
-    # Remove previous location and submit new
+    # Remove previous location
     previous_location = Location.query.filter_by(isCurrent=True).first()
-    previous_location.isCurrent=False
+    previous_location.isCurrent = False
+    db.session.add(previous_location)
 
-    new_location = Location(isCurrent=True, streetNumber=street_num, streetName=street_name)
-    new_location.time = datetime.utcnow()
-    db.session.add(new_location)
     db.session.commit()
 
+    # Get street cleaning schedule for new location
     cleaning_list = []
     for cleaning in get_cleanings(street_num, street_name):
         cleaning_list.append({
