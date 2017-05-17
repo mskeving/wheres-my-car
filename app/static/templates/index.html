@@ -12,6 +12,9 @@
       <div class='cleaning-time'>No street cleaning found</div>
     {% endif %}
     <div class='go-to-current-location'>Park Here</div>
+  {% if extra != "" %}
+    <div class="extra-info">{{extra}}</div>
+  {% endif %}
   </div>
   <div class="map-container">
     <div id="map-canvas"></div>

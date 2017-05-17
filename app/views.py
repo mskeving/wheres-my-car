@@ -1,6 +1,6 @@
 import re, json
 
-from sqlalchemy import and_
+from sqlalchemy import and_, exc
 from flask import render_template, request
 from datetime import datetime
 from app import app, db
@@ -8,13 +8,21 @@ from models import StreetCleaning, Location
 
 @app.route('/')
 def index():
-    current_location = Location.query.filter_by(isCurrent=True).first()
+    locations = Location.query.filter_by(isCurrent=True).all()
+    extra = ""
+
+    if len(locations) > 1:
+        extra = "Warning: More than one current location. Check the db."
+
+    current_location = locations[0]
+
     street_num = int(current_location.streetNumber)
     street_name = current_location.streetName
 
     return render_template('index.html',
                             current_location=current_location,
                             cleanings=get_cleanings(street_num, street_name),
+                            extra=extra,
                             )
 
 @app.route('/lookup', methods=['POST'])

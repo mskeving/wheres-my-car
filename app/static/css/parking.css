@@ -25,6 +25,7 @@ body {
   position: relative;
   max-width: 415px;
   margin: auto;
+  padding: 5px 0px;
   text-align: center;
   background-color: #8897D6;
   border-radius: 5px;
@@ -46,11 +47,16 @@ body {
   position: absolute;
   height: 40px;
   width: 40px;
-  right: 5px;
-  bottom: 5px;
+  right: 30px;
+  top: 30px;
   padding: 4px;
   background-color: #5D6CAD;
   cursor: pointer;
+}
+
+.extra-info {
+  font-size: 14px;
+  font-style: italic;
 }
 
 .map-container {
